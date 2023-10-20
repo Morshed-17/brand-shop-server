@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 
 })
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.PASSWORD_DB}@cluster0.b2w59kw.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,11 +36,30 @@ async function run() {
         const result = await cursor.toArray()
         res.send(result)
    })
+   app.get('/phones/:brand', async(req, res) => {
+        const brand = req.params.brand
+        console.log(brand);
+        const query = {brand: brand}
+        const cursor =  phonesCollection.find(query)
+        const result = await cursor.toArray()
+        res.send(result)
+   })
+   app.get('/phones', async(req, res) => {
+    const cursor = phonesCollection.find()
+    const result = await cursor.toArray()
+    res.send(result)
+   })
    app.post('/phones', async(req, res) => {
         const newProduct = req.body
         const result = await phonesCollection.insertOne(newProduct)
         res.send(result)
-      
+
+   })
+   app.get('/phone/:id', async(req, res) => {
+        const id = req.params.id
+        const query = {_id: new ObjectId(id)}
+        const result = await phonesCollection.findOne(query)
+        res.send(result)
    })
    
 
