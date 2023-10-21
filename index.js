@@ -30,6 +30,7 @@ async function run() {
     // Send a ping to confirm a successful connection
     const brandsCollection = client.db("phonesDB").collection("brands");
     const phonesCollection = client.db("phonesDB").collection("phones");
+    const cartCollection = client.db("phonesDB").collection("mycart");
     app.get("/brands", async (req, res) => {
       const cursor = brandsCollection.find();
       const result = await cursor.toArray();
@@ -78,6 +79,16 @@ async function run() {
       const result = await phonesCollection.updateOne(filter, phone, option);
       res.send(result);
     });
+    app.post('/mycart', async(req, res) => {
+      const newCart = req.body
+      const result = await cartCollection.insertOne(newCart)
+      res.send(result)
+    })
+    app.get('/mycart', async(req, res)=> {
+      const cursor = cartCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+})
 
     await client.db("admin").command({ ping: 1 });
     console.log(
